@@ -5,7 +5,7 @@ pd.set_option("display.max_columns", None)
 pd.set_option("display.width", 500)
 df = pd.read_csv("datasets/persona.csv")
 
-# DataFrame için ilk olarak kategorik ve numeric değişkenleri ayırıyoruz ;
+# DataFrame için ilk olarak categoric ve numeric değişkenleri ayırıyoruz ;
 def grab_col_names(dataframe, cat_th=5, car_th=20) :
     """
     Veri setindeki kategorik, numerik ve kategorik fakat kardinal değişkenlerin isimlerini verir.
@@ -54,6 +54,7 @@ def grab_col_names(dataframe, cat_th=5, car_th=20) :
     print(f"num_but_cat: {len(num_but_cat)}")
 
     return cat_cols, num_cols, cat_but_car
+
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
 
@@ -71,6 +72,7 @@ def check_df (dataframe, head=5) :
     print(dataframe.isnull().sum())
     print("#################### Quantiles ##################")
     print(dataframe.describe([0, 0.05, 0.50, 0.95, 0.99, 1]).T)
+
 check_df(df)
 def cat_summary2(dataframe, col_name, plot=False) :
     print(pd.DataFrame({col_name : dataframe[col_name].value_counts(),
@@ -80,6 +82,7 @@ def cat_summary2(dataframe, col_name, plot=False) :
     if plot :
         sns.countplot(x=dataframe[col_name], data=dataframe)
         plt.show(block=True)
+
 for col in cat_cols :
     cat_summary2(df, col, True)
 
@@ -93,41 +96,42 @@ def num_summary2(dataframe, numerical_col, plot=False) :
         plt.xlabel(numerical_col)
         plt.title(numerical_col)
         plt.show(block=True)
+
 for col in num_cols :
     num_summary2(df, col, True)
 
-# 1,2,3,4,5,7- Veri setindeki değişkenlerin nunique ve frekans sayıları ;
+# Veri setindeki değişkenlerin nunique ve frekans sayıları ;
 for col in df.columns :
     print(col, df[col].nunique(),"\n")
     print(df[col].value_counts(),"\n")
 
-# 6- Ülkelere göre satışlardan toplam ne kadar kazanılmış?
+# Ülkelere göre satışlardan toplam ne kadar kazanılmış?
 df.groupby("COUNTRY")["PRICE"].sum() # veya ;
 df.groupby('COUNTRY').agg({'PRICE': 'sum'})
 
-# 8- Ülkelere göre PRICE ortalamaları nedir?
+# Ülkelere göre PRICE ortalamaları nedir?
 df.groupby("COUNTRY")["PRICE"].mean() # veya ;
 df.groupby('COUNTRY').agg({'PRICE': 'mean'})
 
-# 9- SOURCE'lara göre PRICE ortalamaları nedir?
+# SOURCE'lara göre PRICE ortalamaları nedir?
 df.groupby("SOURCE")["PRICE"].mean()
 
-# 10- COUNTRY-SOURCE kırılımında PRICE ortalamaları nedir?
+# COUNTRY-SOURCE kırılımında PRICE ortalamaları nedir?
 df.groupby(["COUNTRY", "SOURCE"])["PRICE"].mean().reset_index()
 
-# 11- COUNTRY, SOURCE, SEX, AGE kırılımında ortalama kazançlar nedir?
+# COUNTRY, SOURCE, SEX, AGE kırılımında ortalama kazançlar nedir?
 agg_df = df.groupby(["COUNTRY", "SOURCE", "SEX", "AGE"])["PRICE"].mean()
 # Burada işlemi yaptık ancak burada price dışında tüm çıktılar index ismidir.
 
-# 12- Çıktıyı PRICE'a göre azalan şekilde sıralayalım ve indexte yer alan isimleri değişken ismine çevirelim ;
+# Çıktıyı PRICE'a göre azalan şekilde sıralayalım ve indexte yer alan isimleri değişken ismine çevirelim ;
 agg_df = agg_df.sort_values(ascending=False).reset_index()
 
-# 13- Age değişkenini kategorik değişkene çevirelim ve agg_df’e ekleyelim ;
+# Age değişkenini kategorik değişkene çevirelim ve agg_df’e ekleyelim ;
 range = [0, 18, 24, 31, 41, 70] # aralıkların başlangıçlarını yazıyoruz.
 etiket = ["0-18", "19-23", "24-30", "31-40", "41-70"] # aralıkların isimlendirilmesi.
 agg_df["AGE_CAT"] = pd.cut(agg_df["AGE"], bins=range, right=False, labels=etiket)
 
-# 14- Tüm bilgileri içeren ve aralığını gösteren bir değişken oluşturup agg_df içine ekleyelim ;
+# Tüm bilgileri içeren ve aralığını gösteren bir değişken oluşturup agg_df içine ekleyelim ;
 new_agg = agg_df.drop(['AGE', 'PRICE'], axis=1)
 agg_df["customers_level_based"] = ["_".join(col).upper() for col in new_agg.values]
 
