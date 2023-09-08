@@ -145,3 +145,4 @@ agg_df['SEGMENT'] = pd.qcut(agg_df["PRICE"], q=4, labels=['D', 'C', 'B','A'])
 # Segmentleri betimleyelim. (Segmentlere göre groupby yapıp price mean, max, sum’larını alalım) ;
 agg_df.groupby("SEGMENT")["PRICE"].mean()
 
+#s
